@@ -1,21 +1,30 @@
-let alreadyChanged = false;
+// === KONFIG (odpowiednik #define) ===
+const INITIAL_INTERVAL = 100; // ms
+const INTERVAL = 500;         // ms
+
+let found = false;
 
 function changeSolvedCount() {
-  if (alreadyChanged) return;
-
   const el = document.querySelector(".infos.puzzle p strong");
 
   if (el) {
     el.textContent = "9999";
-    alreadyChanged = true; // 🔥 tylko raz!
+    return true;
   }
+
+  return false;
 }
 
-// próbuj co 500ms aż znajdzie (lekko i bezpiecznie)
-const interval = setInterval(() => {
-  changeSolvedCount();
+// szybkie sprawdzanie na start
+let interval = setInterval(() => {
+  if (changeSolvedCount()) {
+    found = true;
 
-  if (alreadyChanged) {
     clearInterval(interval);
+
+    // wolniejsze sprawdzanie po znalezieniu
+    interval = setInterval(() => {
+      changeSolvedCount();
+    }, INTERVAL);
   }
-}, 500);
+}, INITIAL_INTERVAL);
